@@ -2,7 +2,7 @@
 import httplib2
 from mock import patch
 import unittest
-import urlparse
+import urllib.parse
 import simplejson
 
 from linkedin_json_client import api
@@ -72,7 +72,7 @@ class TestApi(unittest.TestCase):
         get_access_token are properly handled. Known cases:
             success response
         """
-        request_token = dict(urlparse.parse_qsl(self.request_token))
+        request_token = dict(urllib.parse.parse_qsl(self.request_token))
         verifier = 72096
 
         with patch('linkedin_json_client.api.oauth.Client') as patched_Client:
@@ -85,7 +85,7 @@ class TestApi(unittest.TestCase):
                 self.access_token)
             self.failUnlessEqual(
                 self.api.get_access_token(request_token, verifier),
-                dict(urlparse.parse_qsl(self.access_token)))
+                dict(urllib.parse.parse_qsl(self.access_token)))
 
     def test_get_email_profile(self):
         """
@@ -94,7 +94,7 @@ class TestApi(unittest.TestCase):
             success response without selectors
             success response with selectors
         """
-        access_token = dict(urlparse.parse_qsl(self.access_token))
+        access_token = dict(urllib.parse.parse_qsl(self.access_token))
 
         with patch('linkedin_json_client.api.oauth.Client') as patched_Client:
             # test a successful request that returns null
@@ -103,13 +103,13 @@ class TestApi(unittest.TestCase):
                 self._responseFactoryAPI({
                     'content-length': '4',
                     'content-location':
-                        u'https://api.linkedin.com/v1/people/~/email-address?'
-                        u'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
-                        u'oauth_nonce=30612878&oauth_timestamp=1351720757&'
-                        u'oauth_consumer_key=q00tdja3bfzo&format=json&'
-                        u'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
-                        u'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
-                        u'oauth_signature=rTK25E5HTOqz2RhW5Y8kqviqHfs%3D',
+                        'https://api.linkedin.com/v1/people/~/email-address?'
+                        'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
+                        'oauth_nonce=30612878&oauth_timestamp=1351720757&'
+                        'oauth_consumer_key=q00tdja3bfzo&format=json&'
+                        'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
+                        'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
+                        'oauth_signature=rTK25E5HTOqz2RhW5Y8kqviqHfs%3D',
                 }),
                 'null')
             email = self.api.get_email_address(access_token)
@@ -122,13 +122,13 @@ class TestApi(unittest.TestCase):
                 self._responseFactoryAPI({
                     'content-length': '20',
                     'content-location':
-                        u'https://api.linkedin.com/v1/people/~/email-address?'
-                        u'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
-                        u'oauth_nonce=74552870&oauth_timestamp=1351726586&'
-                        u'oauth_consumer_key=wldnomopxrhh&format=json&'
-                        u'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
-                        u'oauth_token=fc0522c7-0fd3-45e8-8130-5ea462d87ac0&'
-                        u'oauth_signature=nF9y%2FOfWA0L2eq8i1w%2F2skUcfSQ%3D',
+                        'https://api.linkedin.com/v1/people/~/email-address?'
+                        'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
+                        'oauth_nonce=74552870&oauth_timestamp=1351726586&'
+                        'oauth_consumer_key=wldnomopxrhh&format=json&'
+                        'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
+                        'oauth_token=fc0522c7-0fd3-45e8-8130-5ea462d87ac0&'
+                        'oauth_signature=nF9y%2FOfWA0L2eq8i1w%2F2skUcfSQ%3D',
                 }),
                 data_str)
             email = self.api.get_email_address(access_token)
@@ -152,7 +152,7 @@ class TestApi(unittest.TestCase):
             # test a successful request without scope
             self.failUnlessEqual(
                 self.api.get_request_token(),
-                dict(urlparse.parse_qsl(self.request_token)))
+                dict(urllib.parse.parse_qsl(self.request_token)))
 
             # test a successful request with
             self.failUnlessEqual(
@@ -164,7 +164,7 @@ class TestApi(unittest.TestCase):
                         LinkedInScope.CONNECTIONS,
                         LinkedInScope.CONTACT_INFO,
                         LinkedInScope.MESSAGES]),
-                dict(urlparse.parse_qsl(self.request_token)))
+                dict(urllib.parse.parse_qsl(self.request_token)))
 
     def test_get_user_profile(self):
         """
@@ -173,7 +173,7 @@ class TestApi(unittest.TestCase):
             success response without selectors
             success response with selectors
         """
-        access_token = dict(urlparse.parse_qsl(self.access_token))
+        access_token = dict(urllib.parse.parse_qsl(self.access_token))
         selectors = [
             BasicProfileSelectors.ID, BasicProfileSelectors.FIRST_NAME,
             BasicProfileSelectors.LAST_NAME,
@@ -203,13 +203,13 @@ class TestApi(unittest.TestCase):
                 self._responseFactoryAPI({
                     'content-length': '248',
                     'content-location':
-                        u'https://api.linkedin.com/v1/people/~?oauth_body_hash'
-                        u'=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&oauth_nonce='
-                        u'4922800&oauth_timestamp=1351725442&'
-                        u'oauth_consumer_key=q00tdja3bfzo&format=json&'
-                        u'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
-                        u'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
-                        u'oauth_signature=GLkQMUFaheMJ8y%2Bg2PRomHe8J6I%3D',
+                        'https://api.linkedin.com/v1/people/~?oauth_body_hash'
+                        '=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&oauth_nonce='
+                        '4922800&oauth_timestamp=1351725442&'
+                        'oauth_consumer_key=q00tdja3bfzo&format=json&'
+                        'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
+                        'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
+                        'oauth_signature=GLkQMUFaheMJ8y%2Bg2PRomHe8J6I%3D',
                 }),
                 data_str)
             profile = self.api.get_user_profile(access_token)
@@ -240,16 +240,16 @@ class TestApi(unittest.TestCase):
                 self._responseFactoryAPI({
                     'content-length': '427',
                     'content-location':
-                        u'https://api.linkedin.com/v1/people/~:(id,first-name,'
-                        u'last-name,location,date-of-birth,public-profile-url,'
-                        u'picture-url,site-standard-profile-request,'
-                        u'twitter-accounts,summary,main-address)?'
-                        u'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
-                        u'oauth_nonce=18576507&oauth_timestamp=1351720755&'
-                        u'oauth_consumer_key=q00tdja3bfzo&format=json&'
-                        u'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
-                        u'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
-                        u'oauth_signature=ZSNPv8LmiuTtmE1ON%2F0kR0K1r6Y%3D',
+                        'https://api.linkedin.com/v1/people/~:(id,first-name,'
+                        'last-name,location,date-of-birth,public-profile-url,'
+                        'picture-url,site-standard-profile-request,'
+                        'twitter-accounts,summary,main-address)?'
+                        'oauth_body_hash=2jmj7l5rSw0yVb%2FvlWAYkK%2FYBwk%3D&'
+                        'oauth_nonce=18576507&oauth_timestamp=1351720755&'
+                        'oauth_consumer_key=q00tdja3bfzo&format=json&'
+                        'oauth_signature_method=HMAC-SHA1&oauth_version=1.0&'
+                        'oauth_token=ef0bfbcc-1144-4c5d-a73b-b40c26605da2&'
+                        'oauth_signature=ZSNPv8LmiuTtmE1ON%2F0kR0K1r6Y%3D',
                 }),
                 data_str)
             profile = self.api.get_user_profile(

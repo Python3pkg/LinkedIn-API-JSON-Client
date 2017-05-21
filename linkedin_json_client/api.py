@@ -1,8 +1,8 @@
 #! usr/bin/env python
 from datetime import datetime
 import time
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import oauth2 as oauth
 import simplejson
 
@@ -45,7 +45,7 @@ class LinkedInJsonAPI(object):
 
     def dt_obj_to_string(self, dtobj):
         if (type(dtobj) == type(int) or type(dtobj) == type(str) or
-            type(dtobj) == type(long)):
+            type(dtobj) == type(int)):
             return dtobj
         elif hasattr(dtobj, 'timetuple'):
             return time.mktime(int(dtobj.timetuple())*1000)
@@ -62,7 +62,7 @@ class LinkedInJsonAPI(object):
         """
         token = self.get_user_token(request_token)
         token.set_verifier(verifier)
-        return dict(urlparse.parse_qsl(self.request(
+        return dict(urllib.parse.parse_qsl(self.request(
             self.access_token_path, {}, 'POST', token=token)))
 
     def get_comment_feed(
@@ -96,15 +96,15 @@ class LinkedInJsonAPI(object):
         representing UTC with millisecond precision or a Python datetime
         object.
         """
-        if 'type' in query_args.keys():
+        if 'type' in list(query_args.keys()):
             assert type(query_args['type']) == type(list()),\
                 'Keyword argument "type" must be of type "list"'
             [self.check_network_code(c) for c in query_args['type']]
 
-        if 'before' in query_args.keys():
+        if 'before' in list(query_args.keys()):
             query_args['before'] = (self.dt_obj_to_string(query_args['before'])
                                 if query_args['before'] else None)
-        if 'after' in query_args.keys():
+        if 'after' in list(query_args.keys()):
             query_args['after'] = (self.dt_obj_to_string(query_args['after'])
                                if query_args['after'] else None)
 
@@ -125,7 +125,7 @@ class LinkedInJsonAPI(object):
                                             'must be of type "list"'
             query_args['scope'] = " ".join(scope)
 
-        return dict(urlparse.parse_qsl(self.request(
+        return dict(urllib.parse.parse_qsl(self.request(
             self.request_token_path, query_args, 'POST')))
 
     def get_user_connections(
@@ -244,7 +244,7 @@ class LinkedInJsonAPI(object):
         client = oauth.Client(self.consumer, token=token)
         query_args.update(self.format)
         resp, content = client.request(
-            url + '?%s' % urllib.urlencode(query_args), method,
+            url + '?%s' % urllib.parse.urlencode(query_args), method,
             body=body, headers=headers)
 
         # an error occurred
@@ -254,10 +254,10 @@ class LinkedInJsonAPI(object):
             except:
                 # if not JSON, usually key=value pairs
                 error_json = {
-                    u'errorCode': u'unknown',
-                    u'message': u'%s' % dict(urlparse.parse_qsl(content)),
-                    u'status': u'unknown',
-                    u'timestamp': u'%s' % datetime.now()
+                    'errorCode': 'unknown',
+                    'message': '%s' % dict(urllib.parse.parse_qsl(content)),
+                    'status': 'unknown',
+                    'timestamp': '%s' % datetime.now()
                 }
                 raise LinkedInApiJsonClientError(error_json)
         return content
@@ -278,7 +278,7 @@ class LinkedInJsonAPI(object):
         and "value" as keyword arguments.  Documentation
         for obtaining those values can be found on the LinkedIn website.
         """
-        if 'first_name' in query_args.keys():
+        if 'first_name' in list(query_args.keys()):
             mxml = self.invitation_factory(recipients, subject, body,
                 first_name=query_args['first_name'],
                 last_name=query_args['last_name'])
